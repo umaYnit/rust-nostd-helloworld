@@ -1,0 +1,5 @@
+[target.'cfg(target_os = "windows")']
+rustflags = ["-C", "link-args=/ENTRY:_start /SUBSYSTEM:console"]
+
+[target.'cfg(not(target_os = "windows"))']
+rustflags = ["-C", "link-args=-nostartfiles"]
