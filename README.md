@@ -4,9 +4,32 @@ Rust 在`no_std` 环境下打印hello world。
 
 在linux/mac下有一个不同调用方式的features，通过`cargo run --release --features asm`进行测试。
 
-已在win10平台和linux平台上验证，因手边没有mac，所以未能测试mac的部分。代码均查看自官方文档。
+已在win10平台和linux平台上验证，~~因手边没有mac，所以未能测试mac的部分~~(mac部分已测试)。代码均查看自官方文档。
 
 水平有限，有不正确的地方希望大家指正。
+
+
+
+更新：
+
+mac部分已经在虚拟机中测试完成。由于cargo目前还不能支持读取feature,参见[该issue](https://github.com/rust-lang/cargo/issues/8170)，所以不能直接使用`cargo build`进行编译。编译命令如下：
+
+```shell
+# 动态链接到libc，通过libc进行系统调用。otool打印如下：
+# Ynits-iMac:rust-nostd-helloworld-master ynit$ otool -L target/release/rust-nostd-helloworld
+# target/release/rust-nostd-helloworld:
+
+cargo rustc --release -- -C link-args="-e __start -nostartfiles"
+
+# 手写汇编代码进行系统调用，直接整个静态链接。otool打印如下：
+# Ynits-iMac:rust-nostd-helloworld-master ynit$ otool -L target/release/rust-nostd-helloworld
+# target/release/rust-nostd-helloworld:
+#	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1225.1.1)
+
+cargo rustc --release --features=asm -- -C link-args="-e __start -static -nostartfiles"
+```
+
+
 
 
 
